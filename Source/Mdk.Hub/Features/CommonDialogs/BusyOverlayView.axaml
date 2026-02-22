@@ -1,0 +1,46 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:Mdk.Hub.Features.CommonDialogs"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Mdk.Hub.Features.CommonDialogs.BusyOverlayView"
+             x:DataType="local:BusyOverlayViewModel"
+             Background="{StaticResource BackgroundOverlayBrush}"
+             HorizontalAlignment="Stretch"
+             VerticalAlignment="Stretch">
+
+    <Grid>
+        <Border Background="{DynamicResource SystemChromeMediumColor}"
+                BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="32,24"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Width="400">
+            <StackPanel Spacing="16" HorizontalAlignment="Center">
+                <!-- Progress indicator -->
+                <ProgressBar IsIndeterminate="{Binding IsIndeterminate}"
+                             Value="{Binding Progress}"
+                             Width="200"
+                             Height="4" />
+
+                <TextBlock Text="{Binding Message}"
+                           Classes="body"
+                           TextAlignment="Center"
+                           TextWrapping="Wrap"
+                           MaxWidth="336"
+                           HorizontalAlignment="Center" />
+
+                <!-- Cancel button -->
+                <Button Content="Cancel"
+                        Command="{Binding CancelCommand}"
+                        HorizontalAlignment="Center"
+                        IsVisible="{Binding IsCancellable}"
+                        MinWidth="80" />
+            </StackPanel>
+        </Border>
+    </Grid>
+
+</UserControl>

@@ -1,0 +1,187 @@
+v.2.2.0
+   - First public stable Hub release.
+   - Version number aligned with MDK2 CLI/package line (jump from prerelease 1.x to 2.2.x) to reduce cross-tool version confusion.
+   - Hub and CLI are still versioned and released separately.
+
+v.1.0.0-pre.44
+   - New icon by Yellow51
+   
+v.1.0.0-pre.43
+   - Added Mixin project template support.
+   - Project icons now consistent across the application.
+   - Last used project location now remembered per template type.
+   - Added macro editor for custom text replacement in projects.
+   - Macros can be configured separately for shared (Main) and local (developer-specific) settings.
+   - Added list editors for Namespaces and Ignores configuration.
+   - Configuration editors now include descriptions explaining their purpose.
+
+v.1.0.0-pre.42
+   - Package update checks now respond to refresh command.
+   - Improved visual spacing consistency between action items.
+
+v.1.0.0-pre.41
+   - Interactive notifications pause timeout when hovering to allow reading and clicking actions.
+
+v.1.0.0-pre.40
+   - Project thumbnails now displayed in project list (thumb.png or thumb.jpg in project directory).
+   - Redesigned notification snackbars with horizontal layout for improved compactness.
+   - Added configurable deployment notification timeout in Global Settings > Advanced.
+   - Quick confirmation messages now display as toast-style notifications without close button.
+   - Removed "Show me" button from deployment notifications.
+   - Updated Hub application icon.
+
+v.1.0.0-pre.39
+   - Fixed Hub ignoring global custom auto output paths when resolving script/mod locations.
+   - Copy to clipboard, Show me, and deployment status now respect custom auto paths.
+   - Fixed excessive top margin above action items in project actions panel.
+
+v.1.0.0-pre.38
+   - Fixed "Open in Hub" button in snackbar notifications not restoring the window.
+
+v.1.0.0-pre.37
+   - Unified validation message styling across all dialogs.
+   - Fixed validation error borders persisting in focus and hover states.
+   - Fixed app not starting minimized when launched with build notifications.
+   - Fix template updates for pull requests
+
+v.1.0.0-pre.35
+   - Update "Clear" button on Textboxes
+
+v.1.0.0-pre.34
+   - Fixed a crash when opening the About view
+
+v.1.0.0-pre.33
+   - Added unified PathInput control for consistent path editing across settings.
+   - Added UI testing infrastructure and expanded unit test coverage.
+   - Improved test infrastructure with comprehensive filesystem abstraction.
+   - Attempt to fix path resolution on Linux
+
+v.1.0.0-pre.32
+   - Fixed unsaved changes warning appearing after saving project options.
+
+v.1.0.0-pre.31
+   - Fixed mass update dialog resizing when processing long project names.
+   - Improved project ordering during mass updates to maintain consistency.
+
+v.1.0.0-pre.30
+   - Double-click projects in overview to open in IDE.
+   - Fixed copy script button remaining disabled after deployment.
+
+v.1.0.0-pre.29
+   - Linux support: MDK2 Hub now available for Linux.
+   - Cross-platform improvements for Hub/CLI communication.
+
+v.1.0.0-pre.28
+   - Simplified MDK2 folder structure (settings now at MDK2\settings.json instead of MDK2\Hub\settings.json).
+   - Legacy .version files from previous MDK2 versions are now automatically cleaned up after import.
+   - Hub window position and size are now properly managed by the OS on first run.
+
+v.1.0.0-pre.27
+   - Hub window now activates and comes to front when OpenHub build notification is triggered.
+   - Now using the Mal.SourceGeneratedDI package.
+
+v.1.0.0-pre.26
+   - Configuration editor now displays settings in a single scrollable view (no tabs).
+   - Added "Fix it" button to reorganize misplaced configuration settings.
+   - INI parser now preserves comments and formatting when saving changes.
+   - Prerequisites check only shows dialog when problems are found.
+   - Reordered configuration options to prioritize minification settings.
+
+v.1.0.0-pre.25
+   - Fixed build notifications not registering projects in Hub (validates via mdk.ini files now).
+   - Internal: Refactored project configuration system for better maintainability.
+
+
+v.1.0.0-pre.23
+   - Fixed Hub update card disappearing during download (critical state flow bug).
+
+v.1.0.0-pre.22
+   - Test release to verify update detection and installation.
+
+v.1.0.0-pre.21
+   - Fixed startup crash in single-file published apps.
+
+v.1.0.0-pre.20
+   - Fixed Hub update detection (off-by-one error parsing "hub-v" prefix).
+   - Added clear session start banner with version to log files.
+
+v.1.0.0-pre.19
+   - Test release for update detection debugging.
+
+v.1.0.0-pre.18
+   - Fixed workflow to create tags at correct commits instead of defaulting to main branch.
+   - Fixed GitHub release detection to sort by semantic version.
+
+v.1.0.0-pre.17
+   - Test version bump.
+
+v.1.0.0-pre.15
+   - Fixed Velopack GithubSource to respect prerelease update setting.
+
+v.1.0.0-pre.14
+   - Automated prerelease stability warning in GitHub release notes.
+   - Fixed version comparison to use semantic versioning instead of string comparison.
+   - Hub now correctly detects when running a newer version than available on GitHub.
+
+v.1.0.0-pre.13
+   - Automated prerelease stability warning in GitHub release notes.
+
+v.1.0.0-pre.13
+   - Fixed false positive update detection by comparing current version against latest.
+   - Added version number to update status message for clarity.
+
+v.1.0.0-pre.12
+   - Test release to verify update mechanism.
+   - Added version number to update status message.
+
+v.1.0.0-pre.11
+   - Fixed Hub update installation by correcting repository URL.
+   - Centralized all environment metadata (URLs, package names) in EnvironmentMetadata class.
+
+v.1.0.0-pre.10
+   - Added automatic prompt to enable prerelease updates when running a prerelease version.
+   - Fixed actions panel to show global actions (announcements, updates) when no projects exist.
+   - Fixed update check not responding to Ctrl+R refresh command.
+   - Fixed window positioning on first run to center on screen instead of appearing in top-left corner.
+
+v.1.0.0-pre.9
+   - Fixed actions panel not appearing when Hub starts with no previously selected project.
+   - Fixed About screen version number not displaying correctly.
+   - Improved project selection to automatically select first project when none is saved.
+
+v.1.0.0-pre.8
+   - Enhanced installation experience with comprehensive guidance for first-time users.
+   - Added detailed installation documentation addressing Windows SmartScreen warnings.
+   - Improved GitHub release notes to include reassuring installation instructions.
+   - Added project deletion dropdown with "Remove from Hub" and "Delete Project" options.
+
+v.1.0.0-pre.7
+   - Fixed update system to properly respect prerelease setting for all components.
+   - NuGet package checks now filter out prereleases when disabled.
+   - Template installation now uses --prerelease flag only when enabled.
+
+v.1.0.0-pre.6
+   - Fixed Hub update detection checking wrong GitHub repository.
+
+v.1.0.0-pre.5
+   - Fixed circular dependency between Shell service and ShellViewModel.
+   - Shell service no longer references view models directly.
+   - Disabled debug mode for easter egg (now only activates on October 23rd).
+   - Settings dialog now creates fresh instance each time instead of reusing singleton.
+
+v.1.0.0-pre.4
+   - Fixed release tag generation (removed BOM from version files).
+
+v.1.0.0-pre.3
+   - Removed standalone Mdk.Notification.Windows - fully replaced by integrated snackbar system.
+
+v.1.0.0-pre.2
+   - Linux support: Hub now enforces required path configuration on Linux with validation and startup gating.
+   - Path configuration: Added validation UI for Space Engineers binary, script output, and mod output paths.
+   - Simulation mode: Added --simulate-linux flag for testing Linux behavior on Windows.
+   - Service initialization: All services now wait for configuration to be complete before starting.
+   - Auto-focus: Invalid fields automatically receive focus when configuration dialog opens on Linux.
+
+v.1.0.0-pre.1
+   - First prerelease of the MDK2 Hub application.
+

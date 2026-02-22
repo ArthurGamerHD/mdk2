@@ -1,0 +1,69 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- 
+    Color Palette - Redesigned for consistency and clarity
+    
+    Design Principles:
+    - 4-level text hierarchy (Primary/Body/Muted/Disabled)
+    - Colored headings use accent colors, not grey text colors
+    - Border thickness indicates importance (3px danger > 2px important > 1px standard)
+    - Semantic colors have single clear purpose (selection ≠ accent ≠ interactive)
+    -->
+
+    <!-- Text Colors (4 levels - simplified from 6) -->
+    <Color x:Key="TextPrimaryColor">#FFffffff</Color>       <!-- Pure white - Hero text, H1 titles -->
+    <Color x:Key="TextBodyColor">#FFd0d0d0</Color>          <!-- Standard body text (was TextSecondaryColor) -->
+    <Color x:Key="TextMutedColor">#FFb0b0b0</Color>         <!-- De-emphasized text (was TextTertiaryColor) -->
+    <Color x:Key="TextDisabledColor">#FF808080</Color>      <!-- Disabled/tertiary text -->
+
+    <!-- Semantic Accent Colors -->
+    <Color x:Key="AccentInteractiveColor">#FF4da6ff</Color>          <!-- Interactive elements (buttons, links) -->
+    <Color x:Key="AccentInteractiveLightColor">#FF80b3ff</Color>     <!-- Lighter interactive variant -->
+    <Color x:Key="AccentInteractiveDarkColor">#FF3388cc</Color>      <!-- Darker interactive variant -->
+    <Color x:Key="AccentHeadingColor">#FF4da6ff</Color>              <!-- Section headings (H2) - from website -->
+    <Color x:Key="AccentHeadingLightColor">#FF80b3ff</Color>         <!-- Subsection headings (H3) - from website -->
+    <Color x:Key="AccentSuccessColor">#FF28a745</Color>              <!-- Success states - match website -->
+    <Color x:Key="AccentWarningColor">#FFffc107</Color>              <!-- Warnings - bright yellow -->
+    <Color x:Key="AccentInfoColor">#FFe6b84d</Color>                 <!-- Info - subtle amber/gold for dark backgrounds -->
+    <Color x:Key="AccentDangerColor">#FFff6666</Color>               <!-- Danger/destructive -->
+
+    <!-- Background Colors -->
+    <Color x:Key="BackgroundPrimaryColor">#FF1a1a2e</Color>      <!-- Main window -->
+    <Color x:Key="BackgroundSecondaryColor">#FF0f0f1a</Color>    <!-- Darker sections (drawer) -->
+    <Color x:Key="BackgroundDialogColor">#FF1a1a2e</Color>       <!-- Dialogs (same as primary) -->
+    <Color x:Key="BackgroundCardColor">#CC1a1a2e</Color>         <!-- Cards (80% opacity) -->
+    <Color x:Key="BackgroundCardHoverColor">#DD1a1a2e</Color>    <!-- Card hover (same hue, more opaque) -->
+    <Color x:Key="BackgroundCardSelectedColor">#EE1a1a2e</Color> <!-- Card selected (same hue, most opaque) -->
+    <Color x:Key="BackgroundInfoCardColor">#FF3d4a66</Color>     <!-- Info/toast cards (lighter blue-gray for contrast) -->
+    <Color x:Key="BackgroundOverlayColor">#80000000</Color>      <!-- Modal overlay (50% black) -->
+
+    <!-- Border Colors (simplified to 2 levels) -->
+    <Color x:Key="BorderSubtleColor">#1affffff</Color>           <!-- Very light border (10% opacity) -->
+    <Color x:Key="BorderDefaultColor">#33ffffff</Color>          <!-- Default border (20% opacity) -->
+
+    <!-- Overlay Colors (for hover effects and modal overlays) -->
+    <Color x:Key="OverlayHoverColor">#18ffffff</Color>           <!-- Subtle hover overlay (10% white) -->
+    <Color x:Key="OverlayDarkColor">#33000000</Color>            <!-- Dark overlay (20% black) -->
+    <Color x:Key="OverlayLightSubtleColor">#22ffffff</Color>     <!-- Light overlay subtle (13% white) - reduced from 27% -->
+    <Color x:Key="OverlayLightColor">#33ffffff</Color>           <!-- Light overlay medium (20% white) - reduced from 33% -->
+    <Color x:Key="OverlayLightStrongColor">#44ffffff</Color>     <!-- Light overlay strong (27% white) - reduced from 40% -->
+
+    <!-- Button State Colors (semantic names - what they ARE, not where they GO) -->
+    <Color x:Key="AccentPrimaryColor">#FF0056b3</Color>               <!-- Primary action color (darker) -->
+    <Color x:Key="AccentPrimaryHoverColor">#FF007bff</Color>          <!-- Primary hover (lighter) -->
+    <Color x:Key="AccentPrimaryPressedColor">#FF004494</Color>        <!-- Primary pressed (darkest) -->
+    <Color x:Key="SuccessColor">#FF28a745</Color>                     <!-- Success/positive -->
+    <Color x:Key="SuccessHoverColor">#FF34c759</Color>                <!-- Success hover -->
+    <Color x:Key="SuccessPressedColor">#FF1e7e34</Color>              <!-- Success pressed -->
+    <Color x:Key="DangerColor">#FFdc3545</Color>                      <!-- Danger/destructive -->
+    <Color x:Key="DangerHoverColor">#FFc82333</Color>                 <!-- Danger hover -->
+    <Color x:Key="DangerPressedColor">#FFbd2130</Color>               <!-- Danger pressed -->
+    <Color x:Key="SubtleDangerColor">#22ff6666</Color>                <!-- Subtle danger (transparent) -->
+    <Color x:Key="SubtleDangerHoverColor">#33ff6666</Color>           <!-- Subtle danger hover -->
+    <Color x:Key="SubtleDangerPressedColor">#44ff6666</Color>         <!-- Subtle danger pressed -->
+    <Color x:Key="SubtleSuccessColor">#2228a745</Color>               <!-- Subtle success (transparent) -->
+    <Color x:Key="SubtleSuccessHoverColor">#3328a745</Color>          <!-- Subtle success hover -->
+    <Color x:Key="SubtleSuccessPressedColor">#4428a745</Color>        <!-- Subtle success pressed -->
+
+</ResourceDictionary>

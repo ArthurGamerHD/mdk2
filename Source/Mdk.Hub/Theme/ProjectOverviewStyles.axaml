@@ -1,0 +1,86 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:icons="clr-namespace:Mdk.Hub.Features.Projects.Overview.Icons"
+        xmlns:controls="clr-namespace:Mdk.Hub.Framework.Controls">
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <!-- Add Controls for Previewer Here -->
+        </Border>
+    </Design.PreviewWith>
+
+    <!-- ListBox-based project list styles -->
+    <Style Selector="ListBox.project-list">
+        <Setter Property="Margin" Value="0,0,0,16" />
+        <Setter Property="Background" Value="Transparent" />
+        
+        <Style Selector="^ VirtualizingStackPanel">
+            <Setter Property="Margin" Value="8,0" />
+        </Style>
+        
+        <Style Selector="^ .project-icon icons|Symbol">
+            <Setter Property="Width" Value="81" />
+            <Setter Property="Height" Value="52" />
+            <Setter Property="Background" Value="{StaticResource BackgroundCardBrush}" />
+            <Setter Property="Foreground" Value="{StaticResource ForegroundAccentBrush}" />
+            <Setter Property="Margin" Value="2" />
+        </Style>
+        
+        <Style Selector="^ .project-icon-inline icons|Symbol">
+            <Setter Property="Width" Value="20" />
+            <Setter Property="Height" Value="20" />
+            <Setter Property="Foreground" Value="{StaticResource ForegroundAccentBrush}" />
+        </Style>
+
+        <Style Selector="^ TextBlock.title">
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Margin" Value="0,0,0,2" />
+            <Setter Property="Foreground" Value="{StaticResource ForegroundPrimaryBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+
+        <Style Selector="^ TextBlock.last-referenced">
+            <Setter Property="FontSize" Value="10" />
+            <Setter Property="Foreground" Value="{StaticResource ForegroundMutedBrush}" />
+            <Setter Property="Margin" Value="16,2,0,0" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Setter Property="VerticalAlignment" Value="Bottom" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+
+        <!-- ListBoxItem container styles -->
+        <Style Selector="^ > ListBoxItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Margin" Value="0" />
+        </Style>
+
+        <!-- Default state - transparent border reserves space -->
+        <Style Selector="^ > ListBoxItem /template/ ContentPresenter">
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="3,0,0,0" />
+        </Style>
+
+        <!-- Hover state -->
+        <Style Selector="^ > ListBoxItem:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource OverlayLightBrush}" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="3,0,0,0" />
+        </Style>
+
+        <!-- Selected state - accent left border + background -->
+        <Style Selector="^ > ListBoxItem:selected /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource OverlayLightSubtleBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderAccentBrush}" />
+            <Setter Property="BorderThickness" Value="3,0,0,0" />
+        </Style>
+
+        <!-- Selected + Hover -->
+        <Style Selector="^ > ListBoxItem:selected:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource OverlayLightBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderAccentBrush}" />
+            <Setter Property="BorderThickness" Value="3,0,0,0" />
+        </Style>
+    </Style>
+</Styles>

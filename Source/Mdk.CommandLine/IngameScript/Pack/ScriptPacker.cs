@@ -123,6 +123,16 @@ public class ScriptPacker: ProjectJob
         string resolveAutoOutputDirectory()
         {
             console.Trace("Determining the output directory automatically...");
+            
+            // Check for custom global setting first
+            var customPath = Shared.GlobalSettings.GetCustomAutoScriptOutputPath();
+            if (customPath != null)
+            {
+                console.Trace($"Using custom auto script output path from global settings: {customPath}");
+                return customPath;
+            }
+            
+            // Fall back to default behavior
             if (!OperatingSystem.IsWindows())
                 throw new CommandLineException(-1, "The auto output option is only supported on Windows.");
             var se = new SpaceEngineers();
@@ -193,8 +203,28 @@ public class ScriptPacker: ProjectJob
             else
                 project = project.WithCompilationOptions(project.CompilationOptions.WithOutputKind(OutputKind.DynamicallyLinkedLibrary));
         }
-        
-        var allDocuments = project.Documents.ToImmutableArray(); // project.Documents.Where(isNotIgnored).ToImmutableArray();
+
+        // Collect source-generated documents and inline them as regular documents so that
+        // processors can modify them normally. The generators are stripped from the project
+        // to prevent duplicate type definitions after the combiner inlines their output.
+        var sourceGeneratedDocuments = (await project.GetSourceGeneratedDocumentsAsync()).ToImmutableArray();
+        if (sourceGeneratedDocuments.Length > 0)
+        {
+            context.Console.Trace($"  {sourceGeneratedDocuments.Length} source-generated documents");
+            foreach (var analyzerRef in project.AnalyzerReferences.ToArray())
+            {
+                if (analyzerRef.GetGenerators(LanguageNames.CSharp).Any())
+                    project = project.RemoveAnalyzerReference(analyzerRef);
+            }
+            foreach (var sgDoc in sourceGeneratedDocuments)
+            {
+                var syntaxRoot = await sgDoc.GetSyntaxRootAsync();
+                if (syntaxRoot != null)
+                    project = project.AddDocument(sgDoc.Name, syntaxRoot).Project;
+            }
+        }
+
+        var allDocuments = project.Documents.ToImmutableArray();
         
         var manager = ScriptProcessingManager.Create().Build();
 
@@ -231,7 +261,8 @@ public class ScriptPacker: ProjectJob
         if (final.Length > MaxScriptLength)
             context.Interaction.Custom($"NOTE: The final script has {final.Length} characters, which exceeds the maximum of {MaxScriptLength}. The programmable block will not be able to run it.");
         
-        context.Interaction.Script(project.Name, outputDirectory.FullName);
+        if (!string.IsNullOrEmpty(project.FilePath))
+            context.Interaction.Script(project.Name, project.FilePath);
 
         return result;
     }

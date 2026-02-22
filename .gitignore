@@ -396,8 +396,19 @@ FodyWeavers.xsd
 *.msm
 *.msp
 
+# Linux AppImage files
+*.AppImage
+appimage-build/
+
 # JetBrains Rider
 *.sln.iml
+
+# Test/development scripts
+test-*.ps1
+*.test.ps1
+
+# Local documentation/rules files
+.hub-*.md
 
 # MDK-specific
 .issues/

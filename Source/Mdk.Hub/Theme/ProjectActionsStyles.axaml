@@ -1,0 +1,52 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:icons="clr-namespace:Mdk.Hub.Features.Projects.Overview.Icons">
+
+    <!-- Project type icon in action panel header -->
+    <Style Selector="ContentControl.project-type-icon icons|Symbol">
+        <Setter Property="Background" Value="{StaticResource BackgroundCardBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource ForegroundAccentBrush}" />
+    </Style>
+    
+    <!-- Section Title -->
+    <Style Selector="TextBlock.section-title">
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource ForegroundPrimaryBrush}" />
+    </Style>
+
+    <!-- Create hover rows -->
+    <Style Selector="Border.create-hover-row">
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+    <Style Selector="Border.create-hover-row:pointerover">
+        <Setter Property="Background" Value="{StaticResource OverlayHoverBrush}" />
+    </Style>
+
+    <!-- Info labels -->
+    <Style Selector="TextBlock.info-label">
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource ForegroundMutedBrush}" />
+    </Style>
+
+    <Style Selector="TextBlock.info-value">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Foreground" Value="{StaticResource ForegroundPrimaryBrush}" />
+    </Style>
+
+    <!-- Toolbar button - uses subtle style with padding -->
+    <Style Selector="Button.toolbar-button">
+        <Setter Property="Padding" Value="10,8" />
+    </Style>
+
+    <!-- Action Buttons - uses subtle style -->
+    <Style Selector="Button.action-button">
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="Padding" Value="12,10" />
+        <Setter Property="FontSize" Value="14" />
+    </Style>
+
+</Styles>

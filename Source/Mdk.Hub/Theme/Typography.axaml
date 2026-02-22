@@ -1,0 +1,79 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- 
+    Typography System - Size and Weight Only
+    
+    Design principle: Typography defines SIZE and WEIGHT, color comes from separate modifiers.
+    This separates concerns and allows flexible combinations.
+    
+    Minimal type scale based on actual usage patterns:
+    - H1: Dialog/page titles (20px Bold)
+    - H2: Section headings (16px SemiBold) 
+    - H3: Subsection headings (14px SemiBold)
+    - Body: Body text, action titles (14px Normal)
+    - Caption: Descriptions, help text (11px Normal)
+    - Label: Tiny labels, timestamps (10px SemiBold)
+    
+    Color modifiers (from SemanticStyles.axaml):
+    - .primary (white), .body (grey), .muted, .disabled
+    - .heading (blue), .accent (interactive blue)
+    - .success, .warning, .danger
+    
+    Weight modifiers: .medium, .semibold, .bold
+    
+    Icon FontSize Standards (keep hardcoded):
+    - 16px: Standard toolbar/UI icons
+    - 18px: Larger action row icons  
+    - 32px: Hero/symbol icons (project types)
+    -->
+
+    <!-- H1 - Dialog/page main titles -->
+    <Style Selector="TextBlock.h1">
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="FontWeight" Value="Bold" />
+    </Style>
+
+    <!-- H2 - Section headings -->
+    <Style Selector="TextBlock.h2">
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+
+    <!-- H3 - Subsection headings -->
+    <Style Selector="TextBlock.h3">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+
+    <!-- Body - Standard readable text -->
+    <Style Selector="TextBlock.body">
+        <Setter Property="FontSize" Value="14" />
+    </Style>
+
+    <!-- Caption - Descriptions, help text, metadata -->
+    <Style Selector="TextBlock.caption">
+        <Setter Property="FontSize" Value="11" />
+    </Style>
+
+    <!-- Label - Tiny labels, timestamps, warnings -->
+    <Style Selector="TextBlock.label">
+        <Setter Property="FontSize" Value="10" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+
+    <!-- Weight modifiers (combinable with above) -->
+    <Style Selector="TextBlock.medium">
+        <Setter Property="FontWeight" Value="Medium" />
+    </Style>
+
+    <Style Selector="TextBlock.semibold">
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+
+    <Style Selector="TextBlock.bold">
+        <Setter Property="FontWeight" Value="Bold" />
+    </Style>
+
+</Styles>
+

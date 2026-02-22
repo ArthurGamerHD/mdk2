@@ -1,0 +1,138 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:Mdk.Hub.Features.About"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Mdk.Hub.Features.About.AboutView"
+             HorizontalAlignment="Stretch"
+             VerticalAlignment="Stretch"
+             Background="Transparent"
+             x:DataType="local:AboutViewModel">
+    <Grid ColumnDefinitions="10*, 80*, 10*">
+        <Border Classes="dialog-container"
+                Grid.Column="1"
+                Padding="24"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Width="500"
+                MaxHeight="400">
+            <Grid RowDefinitions="*,Auto">
+                <ScrollViewer Grid.Row="0">
+                    <StackPanel Spacing="20">
+                        <!-- Header -->
+                        <StackPanel Spacing="8" HorizontalAlignment="Center">
+                            <Image Source="/Assets/hub256.png"
+                                   Width="64"
+                                   Height="64"
+                                   HorizontalAlignment="Center" />
+                            <TextBlock Text="MDK²"
+                                       IsVisible="False"
+                                       Classes="h1"
+                                       HorizontalAlignment="Center" />
+                            <TextBlock Text="{Binding Version, StringFormat='Hub Version: {0}'}"
+                                       Classes="body"
+                                       HorizontalAlignment="Center" />
+                        </StackPanel>
+
+                        <!-- Separator -->
+                        <Border Height="1" Background="{StaticResource BorderDefaultBrush}" />
+
+                        <!-- Description -->
+                        <TextBlock
+                            Text="MDK² is a comprehensive development toolkit for Space Engineers scripting and modding."
+                            Classes="body"
+                            TextWrapping="Wrap"
+                            HorizontalAlignment="Center"
+                            TextAlignment="Center"
+                            MaxWidth="400" />
+
+                        <!-- Icon Attribution -->
+                        <TextBlock
+                            Classes="caption muted"
+                            TextWrapping="Wrap"
+                            HorizontalAlignment="Center"
+                            TextAlignment="Center"
+                            MaxWidth="400">
+                            <Run Text="Application icon by Yellow51" />
+                        </TextBlock>
+
+                        <!-- Actions -->
+                        <StackPanel Spacing="8">
+                            <Button Command="{Binding OpenGitHubCommand}"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Left"
+                                    Classes="subtle">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <i:Icon Value="fa-brands fa-github" FontSize="16" />
+                                    <TextBlock Text="View on GitHub" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+
+                            <Button Command="{Binding OpenLogsCommand}"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Left"
+                                    Classes="subtle">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <i:Icon Value="fa-solid fa-file-lines" FontSize="16" />
+                                    <TextBlock Text="Open Logs Folder" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+
+                            <Button Command="{Binding OpenDataCommand}"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Left"
+                                    Classes="subtle">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <i:Icon Value="fa-solid fa-folder-open" FontSize="16" />
+                                    <TextBlock Text="Open Data Folder" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+
+                        <!-- Separator -->
+                        <Border Height="1" Background="{StaticResource BorderDefaultBrush}" />
+
+                        <!-- Third-party licenses -->
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="Third-Party Software"
+                                       Classes="caption semibold" />
+                            <TextBlock Classes="caption muted" TextWrapping="Wrap">
+                                <Run Text="MDK² uses the following third-party libraries:" />
+                                <LineBreak />
+                                <LineBreak />
+                                <Run Text="• Avalonia UI (MIT License)" />
+                                <LineBreak />
+                                <Run Text="• Microsoft Roslyn (MIT License)" />
+                                <LineBreak />
+                                <Run Text="• Microsoft.Build (MIT License)" />
+                                <LineBreak />
+                                <Run Text="• Projektanker.Icons.Avalonia (MIT License)" />
+                                <LineBreak />
+                                <Run Text="• Velopack (MIT License)" />
+                            </TextBlock>
+                        </StackPanel>
+
+                        <!-- Separator -->
+                        <Border Height="1" Background="{StaticResource BorderDefaultBrush}" />
+
+                        <!-- Copyright -->
+                        <TextBlock Text="© 2023-2026 The MDK² Authors. All rights reserved."
+                                   Classes="caption muted"
+                                   HorizontalAlignment="Center" />
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- Close button -->
+                <Button Grid.Row="1"
+                        Content="Close"
+                        Command="{Binding CloseCommand}"
+                        HorizontalAlignment="Center"
+                        MinWidth="100"
+                        Margin="0,16,0,0"
+                        IsDefault="True" />
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

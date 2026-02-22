@@ -1,0 +1,236 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- 
+    Semantic Color Modifiers
+    
+    These classes set ONLY color (Foreground property).
+    Combine with Typography classes (.h1, .h2, .body, .caption, .label) for complete styling.
+    
+    Text Color Hierarchy:
+    - .primary = Pure white (#ffffff) for emphasis
+    - (default) = Body grey (#d0d0d0) for standard text  
+    - .muted = Dimmer grey (#b0b0d0) for de-emphasized
+    - .disabled = Most dim (#808080) for disabled state
+    
+    Semantic Colors:
+    - .heading = Bright blue (#4da6ff) for section headings (H2)
+    - .heading-light = Light blue (#80b3ff) for subsections (H3)
+    - .accent = Interactive blue (#007bff) for links in prose
+    - .success, .warning, .danger = State colors
+    -->
+
+    <!-- Text Color Modifiers -->
+    
+    <!-- Primary - Pure white for emphasis (H1 titles) -->
+    <Style Selector="TextBlock.primary">
+        <Setter Property="Foreground" Value="{StaticResource ForegroundPrimaryBrush}" />
+    </Style>
+
+    <!-- Muted - De-emphasized text -->
+    <Style Selector="TextBlock.muted">
+        <Setter Property="Foreground" Value="{StaticResource ForegroundMutedBrush}" />
+    </Style>
+
+    <!-- Disabled - Most de-emphasized -->
+    <Style Selector="TextBlock.disabled">
+        <Setter Property="Foreground" Value="{StaticResource ForegroundDisabledBrush}" />
+    </Style>
+
+    <!-- Heading - Colored headings (H2) -->
+    <Style Selector="TextBlock.heading">
+        <Setter Property="Foreground" Value="{StaticResource ForegroundAccentBrush}" />
+    </Style>
+
+    <!-- Heading Light - Lighter colored headings (H3) -->
+    <Style Selector="TextBlock.heading-light">
+        <Setter Property="Foreground" Value="{StaticResource ForegroundAccentBrush}" />
+    </Style>
+
+    <!-- Accent - Interactive elements (links in prose) -->
+    <Style Selector="TextBlock.accent">
+        <Setter Property="Foreground" Value="{StaticResource ForegroundAccentBrush}" />
+    </Style>
+
+    <!-- Warning Text -->
+    <Style Selector="TextBlock.warning">
+        <Setter Property="Foreground" Value="{StaticResource ForegroundWarningBrush}" />
+        <Setter Property="FontStyle" Value="Italic" />
+    </Style>
+
+    <!-- Danger Text -->
+    <Style Selector="TextBlock.danger">
+        <Setter Property="Foreground" Value="{StaticResource ForegroundDangerBrush}" />
+    </Style>
+
+    <!-- Success Text -->
+    <Style Selector="TextBlock.success">
+        <Setter Property="Foreground" Value="{StaticResource ForegroundSuccessBrush}" />
+    </Style>
+
+    <!-- Monospace Text (code, paths, technical output) -->
+    <Style Selector="TextBlock.monospace">
+        <Setter Property="FontFamily" Value="Consolas,Courier New,monospace" />
+        <Setter Property="FontSize" Value="12" />
+    </Style>
+
+    <!-- Monospace TextBox (readonly code/output display) -->
+    <Style Selector="TextBox.monospace">
+        <Setter Property="FontFamily" Value="Consolas,Courier New,monospace" />
+        <Setter Property="FontSize" Value="12" />
+    </Style>
+
+    <!-- Container Styles -->
+
+    <!-- Dialog/Modal Container -->
+    <Style Selector="Border.dialog-container">
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Background" Value="{StaticResource BackgroundDialogBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource BorderDefaultBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="24" />
+    </Style>
+
+    <!-- Drawer Header -->
+    <Style Selector="Border.drawer-header">
+        <Setter Property="Background" Value="{StaticResource BackgroundSecondaryBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource BorderDefaultBrush}" />
+        <Setter Property="BorderThickness" Value="0,0,0,1" />
+        <Setter Property="Padding" Value="16,12" />
+    </Style>
+
+    <!-- Drawer Content Area -->
+    <Style Selector="Border.drawer-content">
+        <Setter Property="Background" Value="{StaticResource BackgroundPrimaryBrush}" />
+    </Style>
+
+    <!-- Warning Indicator (dot/ellipse) -->
+    <Style Selector="Ellipse.warning-indicator">
+        <Setter Property="Fill" Value="{StaticResource ForegroundWarningBrush}" />
+        <Setter Property="Width" Value="8" />
+        <Setter Property="Height" Value="8" />
+    </Style>
+
+    <!-- Page/Section Heading (larger than section-heading, for main titles) -->
+    <Style Selector="TextBlock.page-title">
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Foreground" Value="{StaticResource ForegroundPrimaryBrush}" />
+    </Style>
+
+    <!-- Button Variants -->
+
+    <!-- Subtle button for less prominent actions -->
+    <Style Selector="Button.subtle">
+        <Setter Property="Background" Value="{StaticResource BorderSubtleBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource ForegroundPrimaryBrush}" />
+        <Setter Property="FontWeight" Value="Normal" />
+
+        <Style Selector="^:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{StaticResource BorderDefaultBrush}" />
+        </Style>
+
+        <Style Selector="^:pressed /template/ ContentPresenter">
+            <Setter Property="Background" Value="{StaticResource BorderDefaultBrush}" />
+        </Style>
+    </Style>
+
+    <!-- Danger button for destructive actions -->
+    <Style Selector="Button.danger">
+        <Setter Property="Background" Value="{StaticResource BackgroundDangerBrush}" />
+
+        <Style Selector="^:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{StaticResource BackgroundDangerHoverBrush}" />
+        </Style>
+
+        <Style Selector="^:pressed /template/ ContentPresenter">
+            <Setter Property="Background" Value="{StaticResource BackgroundDangerPressedBrush}" />
+        </Style>
+    </Style>
+
+    <!-- Success button for positive actions -->
+    <Style Selector="Button.success">
+        <Setter Property="Background" Value="{StaticResource BackgroundSuccessBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource ForegroundPrimaryBrush}" />
+
+        <Style Selector="^:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{StaticResource BackgroundSuccessHoverBrush}" />
+        </Style>
+
+        <Style Selector="^:pressed /template/ ContentPresenter">
+            <Setter Property="Background" Value="{StaticResource BackgroundSuccessPressedBrush}" />
+        </Style>
+    </Style>
+
+    <!-- Subtle danger - for subtle destructive actions -->
+    <Style Selector="Button.subtle.danger">
+        <Setter Property="Background" Value="{StaticResource BackgroundSubtleDangerBrush}" />
+
+        <Style Selector="^:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{StaticResource BackgroundSubtleDangerHoverBrush}" />
+        </Style>
+
+        <Style Selector="^:pressed /template/ ContentPresenter">
+            <Setter Property="Background" Value="{StaticResource BackgroundSubtleDangerPressedBrush}" />
+        </Style>
+    </Style>
+
+    <!-- Subtle success - for subtle positive actions -->
+    <Style Selector="Button.subtle.success">
+        <Setter Property="Background" Value="{StaticResource BackgroundSubtleSuccessBrush}" />
+
+        <Style Selector="^:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{StaticResource BackgroundSubtleSuccessHoverBrush}" />
+        </Style>
+
+        <Style Selector="^:pressed /template/ ContentPresenter">
+            <Setter Property="Background" Value="{StaticResource BackgroundSubtleSuccessPressedBrush}" />
+        </Style>
+    </Style>
+
+    <!-- Vertical Tab Control -->
+    <Style Selector="TabControl.vertical-tabs">
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+    <Style Selector="TabControl.vertical-tabs > TabStrip">
+        <Setter Property="Background" Value="{StaticResource BackgroundSecondaryBrush}" />
+        <Setter Property="Margin" Value="0,0,16,0" />
+        <Setter Property="MinWidth" Value="140" />
+    </Style>
+
+    <Style Selector="TabControl.vertical-tabs TabItem">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{StaticResource ForegroundMutedBrush}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="Padding" Value="16,10" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="BorderThickness" Value="0,0,0,1" />
+        <Setter Property="BorderBrush" Value="{StaticResource BorderSubtleBrush}" />
+    </Style>
+
+    <Style Selector="TabControl.vertical-tabs TabItem:pointerover">
+        <Setter Property="Background" Value="{StaticResource BackgroundDialogBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource ForegroundPrimaryBrush}" />
+    </Style>
+
+    <Style Selector="TabControl.vertical-tabs TabItem:selected">
+        <Setter Property="Background" Value="{StaticResource BackgroundPrimaryBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource ForegroundAccentBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource BorderAccentBrush}" />
+        <Setter Property="BorderThickness" Value="0,0,3,0" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+
+    <!-- Danger MenuItem -->
+    <Style Selector="MenuItem.danger">
+        <Setter Property="Foreground" Value="{StaticResource ForegroundDangerBrush}" />
+        
+        <Style Selector="^:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{StaticResource BackgroundSubtleDangerBrush}" />
+        </Style>
+    </Style>
+
+</Styles>

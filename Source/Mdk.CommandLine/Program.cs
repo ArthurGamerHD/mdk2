@@ -5,9 +5,7 @@ using System.Threading.Tasks;
 using Mdk.CommandLine.CommandLine;
 using Mdk.CommandLine.IngameScript.LegacyConversion;
 using Mdk.CommandLine.IngameScript.Pack;
-using Mdk.CommandLine.IngameScript.Restore;
 using Mdk.CommandLine.Mod.Pack;
-using Mdk.CommandLine.Mod.Restore;
 using Mdk.CommandLine.Shared.Api;
 
 namespace Mdk.CommandLine;
@@ -93,9 +91,6 @@ public static class Program
                 return null;
             case Verb.Pack:
                 return await PackAsync(parameters, console, interaction);
-            case Verb.Restore:
-                await RestoreAsync(parameters, console, httpClient, interaction);
-                return null;
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -104,7 +99,7 @@ public static class Program
     static async Task<ImmutableArray<PackedProject>?> PackAsync(Parameters parameters, IConsole console, IInteraction interaction)
     {
         if (parameters.PackVerb.ProjectFile is null) throw new CommandLineException(-1, "No project file specified.");
-        if (!File.Exists(parameters.PackVerb.ProjectFile)) throw new CommandLineException(-1, $"The specified project file '{parameters.RestoreVerb.ProjectFile}' does not exist.");
+        if (!File.Exists(parameters.PackVerb.ProjectFile)) throw new CommandLineException(-1, $"The specified project file '{parameters.PackVerb.ProjectFile}' does not exist.");
 
         if (parameters.PackVerb.DryRun)
             console.Print("Currently performing a dry run. No changes will be made.");
@@ -149,48 +144,6 @@ public static class Program
         if (result.Count == 0)
             return null;
         return result.ToImmutable();
-    }
-
-    static async Task RestoreAsync(Parameters parameters, IConsole console, IHttpClient httpClient, IInteraction interaction)
-    {
-        if (parameters.RestoreVerb.ProjectFile is null) throw new CommandLineException(-1, "No project file specified.");
-        if (!File.Exists(parameters.RestoreVerb.ProjectFile)) throw new CommandLineException(-1, $"The specified project file '{parameters.RestoreVerb.ProjectFile}' does not exist.");
-
-        if (parameters.RestoreVerb.DryRun)
-            console.Print("Currently performing a dry run. No changes will be made.");
-
-        await foreach (var project in MdkProject.LoadAsync(parameters.RestoreVerb.ProjectFile, console))
-        {
-            switch (project.Type)
-            {
-                case MdkProjectType.Mod:
-                {
-                    console.Print("Warning: Mod projects are currently in beta. Please report any issues you encounter.");
-                    console.Print($"MDK is restoring mod project: {project.Project.Name}");
-                    var restorer = new ModRestorer();
-                    await restorer.RestoreAsync(parameters, project, console, httpClient, interaction);
-                    break;
-                }
-
-                case MdkProjectType.ProgrammableBlock:
-                {
-                    console.Print($"MDK is restoring ingame script project: {project.Project.Name}");
-                    var restorer = new ScriptRestorer();
-                    await restorer.RestoreAsync(parameters, project, console, httpClient, interaction);
-                    break;
-                }
-
-                case MdkProjectType.LegacyProgrammableBlock:
-                    console.Print($"MDK is converting legacy ingame script project: {project.Project.Name}");
-                    var converter = new LegacyConverter();
-                    await converter.ConvertAsync(parameters, project, console, httpClient);
-                    goto case MdkProjectType.ProgrammableBlock;
-
-                case MdkProjectType.Unknown:
-                    console.Print($"The project file {project.Project.Name} does not seem to be an MDK project.");
-                    break;
-            }
-        }
     }
 
     /// <summary>

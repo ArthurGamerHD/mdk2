@@ -39,9 +39,6 @@
       <Platform Project="x64" />
     </Project>
   </Folder>
-  <Project Path="Mdk.CheckDotNet\Mdk.CheckDotNet.csproj">
-    <Platform Project="x64" />
-  </Project>
   <Project Path="Mdk.CommandLine.Tests\Mdk.CommandLine.Tests.csproj">
     <Platform Project="x64" />
   </Project>
@@ -51,11 +48,10 @@
   <Project Path="Mdk.Extractor\Mdk.Extractor.csproj">
     <Platform Project="x64" />
   </Project>
-  <Project Path="Mdk.Notification.Windows\Mdk.Notification.Windows.csproj">
-    <Platform Project="x64" />
-  </Project>
-  <Project Path="Mdk.Notification\Mdk.Notification.csproj">
-    <Platform Project="x64" />
+  <Project Path="Mdk.Hub.Tests/Mdk.Hub.Tests.csproj" />
+  <Project Path="Mdk.Hub.UITests/Mdk.Hub.UITests.csproj" />
+  <Project Path="Mdk.Hub\Mdk.Hub.csproj">
+      <Platform Project="x64" />
   </Project>
   <Project Path="Mdk.References\Mdk.References.csproj">
     <Platform Project="x64" />

@@ -4,14 +4,15 @@ on:
   pull_request:
   workflow_dispatch:
     inputs:
-      publishToNuGet:
-        description: 'Publish to NuGet (y/n)'
+      deployRelease:
+        description: 'Deploy release (publish NuGet packages and create GitHub release) (y/n)'
         required: true
         default: 'n'
   
   push:
     branches:
       - main
+      - prerelease
     paths:
       - 'Source/**/PackageVersion.txt'
 
@@ -20,6 +21,110 @@ env:
   NuGetPublishEnabled: true
 
 jobs:
+  validate-versions:
+    if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.deployRelease == 'y')
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Validate version suffixes match branch
+        shell: pwsh
+        run: |
+          $branch = "${{ github.ref }}"
+          $isMain = $branch -eq "refs/heads/main"
+          $isPrerelease = $branch -eq "refs/heads/prerelease"
+          
+          if (-not $isMain -and -not $isPrerelease) {
+            Write-Host "Skipping validation - not on main or prerelease branch"
+            exit 0
+          }
+          
+          # Get list of changed PackageVersion.txt files in this push
+          $changedFiles = git diff --name-only ${{ github.event.before }} ${{ github.sha }} | Where-Object { $_ -like "*/PackageVersion.txt" }
+          
+          if ($changedFiles.Count -eq 0) {
+            Write-Host "No PackageVersion.txt files changed in this push"
+            exit 0
+          }
+          
+          $errors = @()
+          
+          foreach ($file in $changedFiles) {
+            if (-not (Test-Path $file)) {
+              Write-Host "Skipping deleted file: $file"
+              continue
+            }
+            
+            $version = (Get-Content $file).Trim()
+            $hasPrereleaseSuffix = $version -match '-'
+            
+            if ($isMain -and $hasPrereleaseSuffix) {
+              $errors += "ERROR: $file contains prerelease version '$version' but branch is 'main'"
+            }
+            elseif ($isPrerelease -and -not $hasPrereleaseSuffix) {
+              $errors += "ERROR: $file contains stable version '$version' but branch is 'prerelease'"
+            }
+            else {
+              Write-Host "✓ $file : $version (valid for $branch)"
+            }
+          }
+          
+          if ($errors.Count -gt 0) {
+            Write-Host "`nValidation failed:"
+            $errors | ForEach-Object { Write-Host $_ }
+            Write-Host "`nBranch/version rules:"
+            Write-Host "  - 'main' branch must have stable versions (e.g., 1.5.0)"
+            Write-Host "  - 'prerelease' branch must have prerelease versions (e.g., 1.5.0-beta.1)"
+            exit 1
+          }
+          
+          Write-Host "`n✓ All changed versions valid for branch $branch"
+
+  update-templates:
+    needs: validate-versions
+    if: always() && (needs.validate-versions.result == 'success' || needs.validate-versions.result == 'skipped')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    defaults:
+      run:
+        working-directory: ./Source
+        shell: pwsh
+    
+    steps:
+      - name: Generate token
+        id: generate-token
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/prerelease')
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+      
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ steps.generate-token.outputs.token || secrets.GITHUB_TOKEN }}
+
+      - name: Update package references in templates
+        run: |
+          cd ScriptTemplates
+          pwsh -ExecutionPolicy Bypass -File ./UpdatePackageReferences.ps1
+
+      - name: Commit template updates
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/prerelease')
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if (git diff --cached --quiet) {
+            Write-Host "No changes to commit"
+          } else {
+            git commit -m "Auto-update template package references"
+            git pull --rebase
+            git push
+          }
+
   build-tools:
     runs-on: ubuntu-latest
 
@@ -31,9 +136,7 @@ jobs:
     strategy:
       matrix:
         project:
-          - "Mdk.CheckDotNet/Mdk.CheckDotNet.csproj"
           - "Mdk.CommandLine/Mdk.CommandLine.csproj"
-          - "Mdk.Notification.Windows/Mdk.Notification.Windows.csproj"
     steps:
       - uses: actions/checkout@v4
 
@@ -42,24 +145,33 @@ jobs:
         with:
           dotnet-version: 9.x
 
-      - name: Build tool project
+      - name: Build tool project for Windows
         run: |
-          dotnet publish ${{ matrix.project }} -c Release -o ../output -r win-x64 -p:DebugType=None
+          dotnet publish ${{ matrix.project }} -c Release -o ../output/win-x64 -r win-x64 -p:DebugType=None
 
-      - name: Prepare artifact name
+      - name: Build tool project for Linux
         run: |
-          $outputDir = "../output"
-          $exePath = Get-ChildItem $outputDir -Filter *.exe | Sort-Object LastWriteTime -Descending | Select-Object -First 1
-          
-          if (-not $exePath) {
-            Write-Error "No executable found in output directory!"
+          dotnet publish ${{ matrix.project }} -c Release -o ../output/linux-x64 -r linux-x64 -p:DebugType=None
+
+      - name: Verify cross-platform binaries
+        run: |
+          # Verify both binaries exist
+          if (-not (Test-Path ../output/win-x64/mdk.exe)) {
+            Write-Error "Windows binary (mdk.exe) not found!"
+            exit 1
+          }
+          if (-not (Test-Path ../output/linux-x64/mdk)) {
+            Write-Error "Linux binary (mdk) not found!"
             exit 1
           }
           
-          Write-Host "Generated executable: $exePath"
-          $artifactName = $exePath.BaseName
-          Write-Host "Artifact name: $artifactName"
-          echo "ARTIFACT_NAME=$artifactName" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
+          Write-Host "✓ Windows binary: mdk.exe + $((Get-ChildItem ../output/win-x64).Count) files"
+          Write-Host "✓ Linux binary: mdk + $((Get-ChildItem ../output/linux-x64).Count) files"
+          Write-Host "Cross-platform CLI package ready"
+
+      - name: Prepare artifact name
+        run: |
+          echo "ARTIFACT_NAME=mdk" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
 
       - name: Debug artifact name
         run: |
@@ -71,7 +183,9 @@ jobs:
           name: ${{ env.ARTIFACT_NAME }}-artifact
           if-no-files-found: error
           retention-days: 7
-          path: ./output/**/*
+          path: |
+            ./output/win-x64/**/*
+            ./output/linux-x64/**/*
 
   build-primary:
     runs-on: ubuntu-latest
@@ -96,47 +210,23 @@ jobs:
         with:
           dotnet-version: 9.x
 
-      - name: Download tool artifacts
+      - name: Download tool artifacts for PbPackager
         uses: actions/download-artifact@v4
         with:
           name: mdk-artifact
           path: ./Source/Mdk.PbPackager/tools
 
-      - name: Download tool artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: mdknotify-win-artifact
-          path: ./Source/Mdk.PbPackager/tools
-
-      - name: Download tool artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: checkdotnet-artifact
-          path: ./Source/Mdk.PbPackager/tools
-
-      - name: Download tool artifacts
+      - name: Download tool artifacts for ModPackager
         uses: actions/download-artifact@v4
         with:
           name: mdk-artifact
-          path: ./Source/Mdk.ModPackager/tools
-
-      - name: Download tool artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: mdknotify-win-artifact
-          path: ./Source/Mdk.ModPackager/tools
-
-      - name: Download tool artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: checkdotnet-artifact
           path: ./Source/Mdk.ModPackager/tools
 
       - name: Restore dependencies
-        run: dotnet restore MDK-Packages.sln
+        run: dotnet restore MDK-Packages.slnx
 
       - name: Build solution
-        run: dotnet build MDK-Packages.sln --configuration Release
+        run: dotnet build MDK-Packages.slnx --configuration Release
 
       - name: Collect NuGet packages
         run: |
@@ -155,10 +245,96 @@ jobs:
           retention-days: 7
           path: ${{ env.NuGetDirectory }}/*.nupkg
 
-  deploy:
-    if: github.ref == 'refs/heads/main'
+  build-hub-windows:
+    runs-on: windows-latest
+    needs: update-templates
+    
+    defaults:
+      run:
+        working-directory: ./Source
+        shell: pwsh
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.x
+
+      - name: Install Velopack
+        run: dotnet tool install -g vpk
+
+      - name: Get version from PackageVersion.txt
+        id: get-version
+        run: |
+          $version = (Get-Content Mdk.Hub/PackageVersion.txt).Trim()
+          echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          Write-Host "Version: $version"
+
+      - name: Publish Mdk.Hub for Windows
+        run: |
+          dotnet publish Mdk.Hub/Mdk.Hub.csproj -c Release -f net9.0-windows -r win-x64 --self-contained -o publish/win
+
+      - name: Build Velopack installer
+        run: |
+          vpk pack --packId Malforge.MdkHub --packVersion $env:VERSION --packDir publish/win --mainExe Mdk.Hub.exe --packTitle "MDK Hub" --icon Mdk.Hub/Assets/hub.ico
+
+      - name: Upload Windows installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mdk-hub-windows-installer
+          if-no-files-found: error
+          retention-days: 7
+          path: ./Source/Releases/*
+
+  build-hub-linux:
     runs-on: ubuntu-latest
-    environment: Deploy
+    needs: update-templates
+    
+    defaults:
+      run:
+        working-directory: ./Source
+        shell: bash
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.x
+
+      - name: Install Velopack
+        run: dotnet tool install -g vpk
+
+      - name: Get version from PackageVersion.txt
+        id: get-version
+        run: |
+          VERSION=$(cat Mdk.Hub/PackageVersion.txt | tr -d '\r' | tr -d '\n' | xargs)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "Version: $VERSION"
+
+      - name: Publish Mdk.Hub for Linux
+        run: |
+          dotnet publish Mdk.Hub/Mdk.Hub.csproj -c Release -f net9.0 -r linux-x64 --self-contained -o publish/linux
+
+      - name: Build Velopack AppImage
+        run: |
+          vpk pack --packId Malforge.MdkHub --packVersion $VERSION --packDir publish/linux --mainExe Mdk.Hub --packTitle "MDK Hub" --icon Mdk.Hub/Assets/hub256.png
+
+      - name: Upload Linux installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mdk-hub-linux-installer
+          if-no-files-found: error
+          retention-days: 7
+          path: ./Source/Releases/*
+
+  deploy:
+    if: (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/prerelease')) || (github.event_name == 'workflow_dispatch' && github.event.inputs.deployRelease == 'y')
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref == 'refs/heads/main' && 'Deploy' || 'Prerelease' }}
     needs: build-primary
 
     defaults:
@@ -176,3 +352,100 @@ jobs:
           foreach($file in (Get-ChildItem "./nuget" -Recurse -Include *.nupkg)) {
             dotnet nuget push $file --api-key "${{ secrets.NUGET_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
           }
+
+  deploy-hub:
+    if: (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/prerelease')) || (github.event_name == 'workflow_dispatch' && github.event.inputs.deployRelease == 'y')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    environment: ${{ github.ref == 'refs/heads/main' && 'Deploy' || 'Prerelease' }}
+    needs:
+      - build-hub-windows
+      - build-hub-linux
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Get version from PackageVersion.txt
+        id: get-version
+        run: |
+          VERSION=$(cat Source/Mdk.Hub/PackageVersion.txt | tr -d '\r' | tr -d '\n' | xargs)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "Version: $VERSION"
+      
+      - name: Extract release notes
+        id: release-notes
+        run: |
+          # Escape dots in version for regex matching
+          ESCAPED_VERSION=$(echo "$VERSION" | sed 's/\./\\./g')
+          
+          # Read release notes and extract the section for this version
+          # Skip the version header line itself, only get the bullet points
+          NOTES=$(awk '/^v\.'"$ESCAPED_VERSION"'$/,/^v\./ {if (/^v\.'"$ESCAPED_VERSION"'$/) next; if (/^v\./) exit; print}' Source/Mdk.Hub/ReleaseNotes.txt)
+          
+          # If notes found, use them; otherwise use a default message
+          if [ -z "$NOTES" ]; then
+            NOTES="See [release notes](https://github.com/${{ github.repository }}/blob/${{ github.sha }}/Source/Mdk.Hub/ReleaseNotes.txt) for details."
+          fi
+          
+          # Add prerelease warning if version contains a dash (prerelease indicator)
+          PRERELEASE_WARNING=""
+          if [[ "$VERSION" == *"-"* ]]; then
+            PRERELEASE_WARNING="⚠️ **Prerelease Notice:** This is a prerelease version intended for testing and feedback. It may contain bugs, incomplete features, or breaking changes. Please report any issues encountered.
+
+          "
+          fi
+          
+          # Add installation guidance
+          INSTALL_GUIDE="## 📥 First Time Installing?
+
+          MDK Hub is an open-source development tool for Space Engineers. Windows SmartScreen will show a warning because MDK Hub is not commercially code-signed. **This is normal for open-source software** - code signing certificates cost hundreds of dollars annually, which isn't practical for free community tools. The software is safe and all source code is publicly visible on GitHub.
+
+          **Quick Steps:**
+          1. Download \`Malforge.MdkHub-win-Setup.exe\` below
+          2. Run the installer - Windows will show a warning
+          3. Click \"More info\" → \"Run anyway\"
+          4. Complete the installation wizard
+
+          **Alternative:** Download the portable ZIP if you prefer not to run an installer.
+
+          📖 **Need more details?** See the [full installation guide](https://github.com/${{ github.repository }}/blob/${{ github.sha }}/INSTALLATION.md) for a detailed explanation, troubleshooting, and verification instructions.
+
+          ---
+
+          ## 🆕 What's New"
+          
+          # Combine installation guide with prerelease warning and release notes
+          FULL_NOTES="${INSTALL_GUIDE}
+          ${PRERELEASE_WARNING}${NOTES}"
+          
+          # Save to output (GitHub Actions multiline output)
+          echo "NOTES<<EOF" >> $GITHUB_OUTPUT
+          echo "$FULL_NOTES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+      
+      - name: Download Windows installer
+        uses: actions/download-artifact@v4
+        with:
+          name: mdk-hub-windows-installer
+          path: ./releases
+      
+      - name: Download Linux installer
+        uses: actions/download-artifact@v4
+        with:
+          name: mdk-hub-linux-installer
+          path: ./releases
+      
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: hub-v${{ env.VERSION }}
+          name: MDK Hub v${{ env.VERSION }}
+          body: ${{ steps.release-notes.outputs.NOTES }}
+          draft: false
+          prerelease: ${{ contains(env.VERSION, '-') }}
+          target_commitish: ${{ github.sha }}
+          files: |
+            ./releases/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

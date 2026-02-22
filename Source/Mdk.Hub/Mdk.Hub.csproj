@@ -1,0 +1,91 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFrameworks>net9.0;net9.0-windows</TargetFrameworks>
+        <Nullable>enable</Nullable>
+        <WarningsAsErrors>nullable;CS1591</WarningsAsErrors>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+        <ApplicationManifest>app.manifest</ApplicationManifest>
+        <ApplicationIcon>Assets\hub.ico</ApplicationIcon>
+        <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+        <RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
+        <Version>$([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)/PackageVersion.txt"))</Version>
+        <InformationalVersion>$(Version)</InformationalVersion>
+        <PublishSingleFile>true</PublishSingleFile>
+        <SelfContained>true</SelfContained>
+        <!--        <RuntimeIdentifiers>win-x64;win-arm64;linux-x64;linux-arm64</RuntimeIdentifiers>-->
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <InternalsVisibleTo Include="Mdk.Hub.Tests" />
+    </ItemGroup>
+
+    <Choose>
+        <When Condition="$([System.String]::Copy('$(TargetFramework)').Contains('-windows'))">
+            <PropertyGroup>
+                <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+            </PropertyGroup>
+
+            <ItemGroup>
+                <Compile Remove="**\*.Linux.cs"/>
+                <None Include="**\*.Linux.cs"/>
+            </ItemGroup>
+        </When>
+
+        <Otherwise>
+            <PropertyGroup>
+                <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
+                <DefineConstants>$(DefineConstants);LINUX</DefineConstants>
+            </PropertyGroup>
+
+            <ItemGroup>
+                <Compile Remove="**\*.Windows.cs"/>
+                <None Include="**\*.Windows.cs"/>
+            </ItemGroup>
+        </Otherwise>
+    </Choose>
+
+    <ItemGroup>
+        <AvaloniaResource Include="Assets\**"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Avalonia" Version="11.3.12" />
+        <PackageReference Include="Avalonia.Desktop" Version="11.3.12" />
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.12" />
+        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.12" />
+        <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+        <PackageReference Include="Avalonia.Diagnostics" Version="11.3.12">
+            <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
+            <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
+        <PackageReference Include="Mal.SourceGeneratedDI" Version="1.0.0">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Projektanker.Icons.Avalonia.FontAwesome" Version="9.6.2"/>
+        <PackageReference Include="Velopack" Version="0.0.1298"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Update="Features\Shell\ShellWindow.axaml.cs">
+            <DependentUpon>MainWindow.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Features\CommonDialogs\CommonDialogsResources.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>CommonDialogsResources.resx</DependentUpon>
+        </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Update="Features\CommonDialogs\CommonDialogsResources.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>CommonDialogsResources.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+    </ItemGroup>
+</Project>

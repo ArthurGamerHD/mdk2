@@ -1,4 +1,36 @@
-﻿v.2.1.18
+v.2.2.0
+    - First stable 2.2 release, including source-generator packing fixes and recent CLI/packaging improvements.
+
+v.2.2.0-pre.7
+    - Scripts using Roslyn source generators are now packed correctly
+
+v.2.2.0-pre.6
+    - Macro replacement now works in Instructions.readme files
+
+v.2.2.0-pre.5
+   - Removed deprecated restore command
+   - Interactive mode now loads from INI files as intended
+   - MSBuild integration improvements for interactive mode control
+
+v.2.2.0-pre.4
+   - Bugfix: Unused field minification fix merged from main (v2.1.18)
+
+v.2.2.0-pre.3
+   - Linux support: MDK2 CLI and packagers now fully support Linux.
+   - Packagers automatically detect your platform and use the correct binary.
+   - Both Windows and Linux binaries included in the package.
+
+v.2.2.0-pre.2
+   - Linux compatibility: CLI now reads Hub's global path settings for auto-detection on Linux.
+   - Interactive mode fully integrated with Hub for cross-platform build notifications.
+   - Improved path handling for cross-platform reliability.
+
+v.2.2.0-pre.1
+   - Introducing MDK Hub: A visual application for managing projects, checking for updates, and configuring settings.
+   - Interactive mode now integrates with the Hub for build notifications and updates.
+   - Cross-platform support for Windows and Linux.
+
+v.2.1.18
    - Bugfix on unused field minification
 
 v.2.1.17
@@ -165,3 +197,4 @@ v.2.0.0-alpha051
 v.2.0.0-alpha1
  - Emergency publish of a very early build due to the problems with MDK1 and the new version of Visual Studio 2022.
  - This version is highly untested, and is missing the minifier.
+

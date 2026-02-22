@@ -1,0 +1,134 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:Mdk.Hub.Features.Shell"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        MinWidth="850" MinHeight="450"
+        x:Class="Mdk.Hub.Features.Shell.ShellWindow"
+        x:DataType="vm:ShellViewModel"
+        Icon="/Assets/hub.ico"
+        Title="MDK² Hub"
+        KeyDown="OnKeyDown">
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:ShellViewModel />
+    </Design.DataContext>
+
+    <Window.Styles>
+        <Style Selector="Grid.main-content.has-overlays">
+            <Setter Property="IsEnabled" Value="False" />
+            <Setter Property="Opacity" Value="0.5" />
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <BlurEffect Radius="5" />
+                </Setter.Value>
+            </Setter>
+            <Setter Property="IsHitTestVisible" Value="False" />
+        </Style>
+    </Window.Styles>
+
+    <Grid vm:EasterEggBehavior.IsEnabled="True">
+
+        <Grid x:Name="MainContentGrid"
+              Classes="main-content"
+              Classes.has-overlays="{Binding HasOverlays}">
+
+            <!-- Main content -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" MinWidth="400" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" MinWidth="400" />
+                </Grid.ColumnDefinitions>
+                <ContentControl Grid.Column="0" Content="{Binding NavigationView}" />
+                <GridSplitter Grid.Column="1" Background="Transparent" ResizeDirection="Columns" Width="4" />
+                <ContentControl Grid.Column="2" Content="{Binding CurrentView}" />
+            </Grid>
+        </Grid>
+
+        <!-- Overlay Layer (blocking dialogs) -->
+        <ItemsControl Grid.Column="0"
+                      Grid.Row="0"
+                      IsVisible="{Binding HasOverlays}"
+                      ItemsSource="{Binding OverlayViews}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+
+        <!-- Toast Layer (non-blocking) -->
+        <ItemsControl ItemsSource="{Binding ToastMessages}"
+                      IsHitTestVisible="False"
+                      VerticalAlignment="Bottom"
+                      HorizontalAlignment="Center"
+                      Margin="0,0,0,40">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Spacing="8" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="vm:ToastMessage">
+                    <Border Classes.dismissing="{Binding IsDismissing}"
+                            Background="{StaticResource BackgroundInfoCardBrush}"
+                            BorderThickness="0"
+                            CornerRadius="8"
+                            Padding="16,12"
+                            BoxShadow="0 4 20 0 #AA000000"
+                            HorizontalAlignment="Center"
+                            RenderTransformOrigin="50%,50%">
+                        <Border.RenderTransform>
+                            <ScaleTransform />
+                        </Border.RenderTransform>
+                        <Border.Styles>
+                            <!-- Entry animation -->
+                            <Style Selector="Border">
+                                <Style.Animations>
+                                    <Animation Duration="0:0:0.2" FillMode="Forward">
+                                        <KeyFrame Cue="0%">
+                                            <Setter Property="Opacity" Value="0" />
+                                            <Setter Property="ScaleTransform.ScaleX" Value="0.8" />
+                                            <Setter Property="ScaleTransform.ScaleY" Value="0.8" />
+                                        </KeyFrame>
+                                        <KeyFrame Cue="100%">
+                                            <Setter Property="Opacity" Value="1" />
+                                            <Setter Property="ScaleTransform.ScaleX" Value="1" />
+                                            <Setter Property="ScaleTransform.ScaleY" Value="1" />
+                                        </KeyFrame>
+                                    </Animation>
+                                </Style.Animations>
+                            </Style>
+                            <!-- Exit animation -->
+                            <Style Selector="Border.dismissing">
+                                <Style.Animations>
+                                    <Animation Duration="0:0:0.2" FillMode="Forward">
+                                        <KeyFrame Cue="0%">
+                                            <Setter Property="Opacity" Value="1" />
+                                            <Setter Property="ScaleTransform.ScaleX" Value="1" />
+                                            <Setter Property="ScaleTransform.ScaleY" Value="1" />
+                                        </KeyFrame>
+                                        <KeyFrame Cue="100%">
+                                            <Setter Property="Opacity" Value="0" />
+                                            <Setter Property="ScaleTransform.ScaleX" Value="0.8" />
+                                            <Setter Property="ScaleTransform.ScaleY" Value="0.8" />
+                                        </KeyFrame>
+                                    </Animation>
+                                </Style.Animations>
+                            </Style>
+                        </Border.Styles>
+                        <TextBlock Text="{Binding Message}"
+                                   Classes="body primary medium"
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap"
+                                   MaxWidth="400" />
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+</Window>

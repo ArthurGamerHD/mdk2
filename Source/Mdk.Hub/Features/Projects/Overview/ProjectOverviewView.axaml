@@ -1,0 +1,179 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:overview="clr-namespace:Mdk.Hub.Features.Projects.Overview"
+             xmlns:m="clr-namespace:Mdk.Hub.Markup"
+             xmlns:icons="clr-namespace:Mdk.Hub.Features.Projects.Overview.Icons"
+             xmlns:avalonia="https://github.com/projektanker/icons.avalonia"
+             xmlns:controls="clr-namespace:Mdk.Hub.Framework.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Mdk.Hub.Features.Projects.Overview.ProjectOverviewView"
+             x:DataType="overview:ProjectOverviewViewModel">
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <overview:ProjectOverviewViewModel />
+    </Design.DataContext>
+
+    <UserControl.DataTemplates>
+        <icons:SymbolSelector>
+            <icons:ProjectTypeDefinition Type="ProgrammableBlock">
+                <DataTemplate>
+                    <icons:ProgrammableBlockSymbol />
+                </DataTemplate>
+            </icons:ProjectTypeDefinition>
+            <icons:ProjectTypeDefinition Type="Mod">
+                <DataTemplate>
+                    <icons:ModSymbol />
+                </DataTemplate>
+            </icons:ProjectTypeDefinition>
+        </icons:SymbolSelector>
+
+        <DataTemplate DataType="overview:ProjectModel">
+            <Border BorderBrush="{DynamicResource BorderSubtleBrush}"
+                    BorderThickness="0,0,0,1"
+                    Padding="4,4,12,4">
+                <Grid ColumnDefinitions="Auto,*">
+                    <!-- Thumbnail or Icon -->
+                    <Grid Grid.Column="0" Grid.RowSpan="2" Margin="0,0,6,0" Width="85" Height="56">
+                        <!-- Thumbnail image (16:10 aspect, fills row height) -->
+                        <Image Source="{Binding Thumbnail}"
+                               Stretch="UniformToFill"
+                               IsVisible="{Binding Thumbnail, Converter={x:Static ObjectConverters.IsNotNull}}"
+                               Margin="2"
+                               ClipToBounds="True" />
+                        
+                        <!-- Fallback icon (shown when no thumbnail) -->
+                        <ContentControl Classes="project-icon"
+                                        Content="{Binding Type}"
+                                        IsVisible="{Binding Thumbnail, Converter={x:Static ObjectConverters.IsNull}}" />
+                    </Grid>
+
+                    <Grid Grid.Column="1" RowDefinitions="Auto,Auto" VerticalAlignment="Center" Margin="0,4,0,4">
+                        <!-- Title row with indicators on the right -->
+                        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,4">
+                            <!-- Small type icon before name -->
+                            <ContentControl Grid.Column="0"
+                                          Classes="project-icon-inline"
+                                          Content="{Binding Type}"
+                                          VerticalAlignment="Center"
+                                          Margin="0,0,4,0" />
+                            
+                            <TextBlock
+                                Grid.Column="1"
+                                Classes="title"
+                                VerticalAlignment="Center"
+                                Text="{Binding Name}" />
+                            
+                            <!-- Indicator dots horizontally aligned on right -->
+                            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4" Margin="8,0,0,0">
+                                <Ellipse Width="8"
+                                         Height="8"
+                                         Classes="warning-indicator"
+                                         IsVisible="{Binding HasUnsavedChanges}"
+                                         ToolTip.Tip="Unsaved changes" />
+                                
+                                <Ellipse Width="10"
+                                         Height="10"
+                                         Fill="{StaticResource ForegroundWarningBrush}"
+                                         IsVisible="{Binding NeedsAttention}"
+                                         ToolTip.Tip="New build notification">
+                                    <Ellipse.Styles>
+                                        <Style Selector="Ellipse">
+                                            <Style.Animations>
+                                                <Animation Duration="0:0:1.5" IterationCount="Infinite">
+                                                    <KeyFrame Cue="0%">
+                                                        <Setter Property="Opacity" Value="1.0" />
+                                                    </KeyFrame>
+                                                    <KeyFrame Cue="50%">
+                                                        <Setter Property="Opacity" Value="0.3" />
+                                                    </KeyFrame>
+                                                    <KeyFrame Cue="100%">
+                                                        <Setter Property="Opacity" Value="1.0" />
+                                                    </KeyFrame>
+                                                </Animation>
+                                            </Style.Animations>
+                                        </Style>
+                                    </Ellipse.Styles>
+                                </Ellipse>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Time row -->
+                        <Grid Grid.Row="1" ColumnDefinitions="Auto,*">
+                            <TextBlock
+                                Grid.Column="0"
+                                Classes="last-referenced"
+                                Text="MDK updates available"
+                                Foreground="{StaticResource ForegroundWarningBrush}"
+                                Margin="16,0,8,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Bottom"
+                                IsVisible="{Binding NeedsUpdate}" />
+
+                            <TextBlock
+                                Grid.Column="1"
+                                Classes="last-referenced"
+                                Text="{Binding LastReferenced, Converter={m:SmartDate}}"
+                                Margin="0,0,0,0" />
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Border>
+        </DataTemplate>
+    </UserControl.DataTemplates>
+
+    <Grid
+        RowDefinitions="Auto,*"
+        ColumnDefinitions="*,Auto,Auto,Auto">
+
+        <TextBox
+            Grid.Row="0"
+            Grid.Column="0"
+            Margin="8"
+            Watermark="Search..."
+            Classes="clearButton"
+            Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <RadioButton
+            Grid.Row="0"
+            Grid.Column="1"
+            Margin="0,8,8,8"
+            Content="All"
+            GroupName="FilterGroup"
+            IsChecked="{Binding ShowAll }" />
+        <RadioButton
+            Grid.Row="0"
+            Grid.Column="2"
+            Margin="0,8,8,8"
+            Content="Mods"
+            GroupName="FilterGroup"
+            IsChecked="{Binding FilterScriptsOnly }" />
+        <RadioButton
+            Grid.Row="0"
+            Grid.Column="3"
+            Margin="0,8,8,8"
+            Content="Scripts"
+            GroupName="FilterGroup"
+            IsChecked="{Binding FilterModsOnly }" />
+
+        <ListBox
+            x:Name="ProjectListBox"
+            Grid.ColumnSpan="4"
+            Grid.Column="0"
+            Grid.Row="1"
+            SelectionMode="Single"
+            ItemsSource="{Binding FilteredProjects}"
+            SelectionChanged="OnSelectionChanged"
+            DoubleTapped="OnProjectListBoxDoubleTapped"
+            HorizontalAlignment="Stretch"
+            Classes="project-list">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <VirtualizingStackPanel Orientation="Vertical" />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+        </ListBox>
+    </Grid>
+</UserControl>

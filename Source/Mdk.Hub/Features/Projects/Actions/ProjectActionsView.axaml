@@ -1,0 +1,106 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:actions="clr-namespace:Mdk.Hub.Features.Projects.Actions"
+             xmlns:icons="clr-namespace:Mdk.Hub.Features.Projects.Overview.Icons"
+             xmlns:options="clr-namespace:Mdk.Hub.Features.Projects.Options"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="600"
+             x:Class="Mdk.Hub.Features.Projects.Actions.ProjectActionsView"
+             x:DataType="actions:ProjectActionsViewModel">
+    <UserControl.DataTemplates>
+        <icons:SymbolSelector>
+            <icons:ProjectTypeDefinition Type="ProgrammableBlock">
+                <DataTemplate>
+                    <icons:ProgrammableBlockSymbol />
+                </DataTemplate>
+            </icons:ProjectTypeDefinition>
+            <icons:ProjectTypeDefinition Type="Mod">
+                <DataTemplate>
+                    <icons:ModSymbol />
+                </DataTemplate>
+            </icons:ProjectTypeDefinition>
+        </icons:SymbolSelector>
+    </UserControl.DataTemplates>
+
+    <Grid RowDefinitions="Auto,*">
+        <!-- Header bar with Global Settings and About buttons -->
+        <Border Grid.Row="0"
+                Height="40"
+                Margin="8"
+                Padding="8,0"
+                HorizontalAlignment="Stretch">
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Spacing="4">
+                <Button Classes="subtle"
+                        VerticalAlignment="Center"
+                        Padding="8"
+                        ToolTip.Tip="Global Settings"
+                        Command="{Binding OpenGlobalSettingsCommand}">
+                    <i:Icon Value="fa-solid fa-gear" FontSize="16" />
+                </Button>
+                <Button Classes="subtle"
+                        VerticalAlignment="Center"
+                        Padding="8"
+                        ToolTip.Tip="About MDK² Hub"
+                        Command="{Binding ShowAboutCommand}">
+                    <i:Icon Value="fa-solid fa-circle-info" FontSize="16" />
+                </Button>
+            </StackPanel>
+        </Border>
+
+        <!-- Main content -->
+        <ScrollViewer Grid.Row="1" Margin="0,0,0,16">
+            <ItemsControl ItemsSource="{Binding Actions}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <actions:ActionItemPanel BareSpacing="8" ContainedSpacing="16" Margin="8,0" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <!-- Options Drawer (slides in from right) -->
+        <Border x:Name="OptionsDrawer"
+                Grid.Row="0"
+                Grid.RowSpan="2"
+                Classes="drawer-content"
+                BorderBrush="{StaticResource BorderDefaultBrush}"
+                BorderThickness="1,0,0,0"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Margin="80,0,0,0"
+                Padding="16"
+                IsVisible="False"
+                RenderTransformOrigin="0.5,0.5">
+            <Border.RenderTransform>
+                <TranslateTransform X="1000" />
+            </Border.RenderTransform>
+
+            <Grid RowDefinitions="Auto,*">
+                <!-- Header with close button -->
+                <Border Grid.Row="0"
+                        Classes="drawer-header"
+                        Margin="-16,-16,-16,16">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Grid.Column="0"
+                                   Text="Project Options"
+                                   Classes="h1"
+                                   VerticalAlignment="Center" />
+                        <Button Grid.Column="1"
+                                Classes="subtle"
+                                Content="✕"
+                                Padding="8,4"
+                                Click="OnCloseDrawerClick"
+                                ToolTip.Tip="Close" />
+                    </Grid>
+                </Border>
+
+                <!-- Options content -->
+                <options:ProjectOptionsView Grid.Row="1" DataContext="{Binding OptionsViewModel}" />
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

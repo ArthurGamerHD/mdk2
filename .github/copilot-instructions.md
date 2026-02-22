@@ -1,3 +1,59 @@
+⚠️ **BRANCH SAFETY WARNING**: Before starting ANY work session, check the current git branch. If on "main" or "prerelease" branches, IMMEDIATELY warn the user and ask if they want to create/switch to a feature branch. These are protected branches that should not receive direct commits during development.
+
+## Commit Message Guidelines (Developer-Focused)
+
+**Audience**: Developers (contributors to MDK)
+**Purpose**: Track technical changes in the codebase
+
+### Rules
+- **Check uncommitted changes first**: Always review `git status` and `git diff` to see what's actually changed
+- **Describe only uncommitted changes**: Don't duplicate previous commits
+- **Short and sweet**: Keep subject line concise (under 72 chars), body to 2-3 sentences max
+- **Focus on what and why, not how**: Explain the problem and the solution approach; the diff shows the implementation details
+- **Be specific**: "Fix TypeTrimmer null reference when processing empty classes" is better than "Fix bug"
+- **Avoid enumerating changes**: Don't list files, methods, or step-by-step changes—describe the change conceptually
+- **Comprehensive**: Cover all relevant uncommitted changes, not just the most recent work
+
+### Examples
+✅ Good:
+- "Add --trace flag support to CLI parameters"
+- "Fix TypeTrimmer crash on unused fields with initializers"
+- "Update buildwithartefacts.yml to validate version suffixes per branch"
+
+❌ Bad:
+- "Fix bug" (too vague)
+- "Update code" (what code?)
+- "Made some changes to the packager" (what changes?)
+
+## Release Notes Guidelines (User-Facing)
+
+**Audience**: MDK users (Space Engineers script/mod developers)
+**Purpose**: Communicate what changed from their perspective between versions
+
+### Rules
+- **User perspective**: Describe capabilities, not implementation
+- **No technical jargon**: Avoid class names, method names, file paths, implementation details
+- **Focus on impact**: What can users now do that they couldn't before? What works better?
+- **Brief**: 1-2 sentences per change
+- **Group related changes**: Multiple small improvements can be one bullet
+
+### Examples
+✅ Good:
+- "Minification now correctly handles unused fields"
+- "Linux support: CLI and packagers work on Linux"
+- "Build notifications now appear in MDK Hub"
+
+❌ Bad:
+- "Fixed NullReferenceException in TypeTrimmer.ProcessField()" (too technical)
+- "Configuration drawer closes automatically after normalization" (describes UX flow, not user benefit)
+- "Updated Mdk.References package to use new detection logic" (describes implementation)
+
+### Release Notes Location
+Each package directory with `PackageVersion.txt` should have a `ReleaseNotes.txt`:
+- Add new version at the top
+- Format: `v.X.Y.Z` followed by indented bullet points
+- Update this file whenever you bump the version
+
 # MDK2 Development Guide
 
 MDK² (Malware's Development Kit for Space Engineers) is a toolkit for developing programmable block scripts and mods for Space Engineers. It consists of NuGet packages, Roslyn analyzers, a CLI tool, and MSBuild integration.
@@ -34,7 +90,7 @@ dotnet test --filter "FullyQualifiedName~TestMethodName"
 dotnet test --filter "FullyQualifiedName~ClassName"
 ```
 
-**Test Framework**: NUnit 4.3.2 with NUnit3TestAdapter 4.6.0
+**Test Framework**: NUnit with NUnit3TestAdapter
 
 ### Linting
 No specific linters configured. Code analysis relies on built-in Roslyn analyzers and IDE warnings.
@@ -51,8 +107,6 @@ No specific linters configured. Code analysis relies on built-in Roslyn analyzer
 - **ScriptTemplates** - .NET templates for creating new projects
 
 ### Support Projects
-- **Mdk.CheckDotNet** - .NET SDK availability checker
-- **Mdk.Notification.Windows** - Toast notifications for build completion
 - **Mdk.Extractor** - Extracts game data for whitelists
 
 ### Hub and Document Generators
