@@ -83,10 +83,7 @@ public class PathInput : TemplatedControl, ISupportValidation
 
     Button? _browseButton;
     Button? _resetButton;
-    /// <summary>
-    ///     Text Box Element
-    /// </summary>
-    protected TextBox? TextBox;
+    TextBox? _textBox;
 
     /// <summary>
     ///     Gets or sets the current path value.
@@ -184,11 +181,11 @@ public class PathInput : TemplatedControl, ISupportValidation
         base.OnApplyTemplate(e);
 
         // Unwire old events if they exist
-        if (TextBox != null)
+        if (_textBox != null)
         {
-            TextBox.TextChanged -= OnTextChanged;
-            TextBox.LostFocus -= OnTextBoxLostFocus;
-            TextBox.KeyDown -= OnTextBoxKeyDown;
+            _textBox.TextChanged -= OnTextChanged;
+            _textBox.LostFocus -= OnTextBoxLostFocus;
+            _textBox.KeyDown -= OnTextBoxKeyDown;
         }
         if (_browseButton != null)
             _browseButton.Click -= OnBrowseClick;
@@ -196,13 +193,13 @@ public class PathInput : TemplatedControl, ISupportValidation
             _resetButton.Click -= OnResetClick;
 
         // Find and wire up template parts
-        TextBox = e.NameScope.Find<TextBox>("PART_TextBox");
-        if (TextBox != null)
+        _textBox = e.NameScope.Find<TextBox>("PART_TextBox");
+        if (_textBox != null)
         {
-            TextBox.Text = Path;
-            TextBox.TextChanged += OnTextChanged;
-            TextBox.LostFocus += OnTextBoxLostFocus;
-            TextBox.KeyDown += OnTextBoxKeyDown;
+            _textBox.Text = Path;
+            _textBox.TextChanged += OnTextChanged;
+            _textBox.LostFocus += OnTextBoxLostFocus;
+            _textBox.KeyDown += OnTextBoxKeyDown;
         }
 
         _browseButton = e.NameScope.Find<Button>("PART_BrowseButton");
@@ -227,8 +224,8 @@ public class PathInput : TemplatedControl, ISupportValidation
         else if (change.Property == PathProperty)
         {
             // Update TextBox when Path changes externally (e.g., from ViewModel)
-            if (TextBox != null && TextBox.Text != Path)
-                TextBox.Text = Path;
+            if (_textBox != null && _textBox.Text != Path)
+                _textBox.Text = Path;
             UpdateResolvedProperties();
         }
         else if (change.Property == DefaultPathProperty || 
@@ -301,11 +298,11 @@ public class PathInput : TemplatedControl, ISupportValidation
 
     void OnTextChanged(object? sender, TextChangedEventArgs e)
     {
-        if (TextBox == null)
+        if (_textBox == null)
             return;
 
         // Real-time validation against normalized path
-        var text = TextBox.Text ?? string.Empty;
+        var text = _textBox.Text ?? string.Empty;
         
         // Skip validation if it's the default value
         if (text == DefaultPath)
@@ -338,10 +335,10 @@ public class PathInput : TemplatedControl, ISupportValidation
     /// </summary>
     protected virtual void CommitText()
     {
-        if (TextBox == null)
+        if (_textBox == null)
             return;
 
-        var text = TextBox.Text ?? string.Empty;
+        var text = _textBox.Text ?? string.Empty;
         
         // Always allow default value without normalization
         if (text == DefaultPath)
@@ -363,7 +360,7 @@ public class PathInput : TemplatedControl, ISupportValidation
         }
         
         Path = normalized;
-        TextBox.Text = normalized; // Update TextBox with cleaned version
+        _textBox.Text = normalized; // Update TextBox with cleaned version
         HasError = false;
         ValidationError = null;
     }

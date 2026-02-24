@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 
@@ -48,13 +49,22 @@ public class FileInput : PathInput
         set => SetValue(PatternsProperty, value);
     }
     
+    TextBox? _textBox;
+
+    /// <inheritdoc />
+    protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
+    {
+        base.OnApplyTemplate(e);
+        _textBox = e.NameScope.Find<TextBox>("PART_TextBox");
+    } 
+
     /// <inheritdoc />
     protected override void CommitText()
     {
-        if (TextBox == null)
+        if (_textBox == null)
             return;
 
-        var text = TextBox.Text ?? string.Empty;
+        var text = _textBox.Text ?? string.Empty;
         
         // Always allow default value without normalization
         if (text == DefaultPath)
@@ -83,7 +93,7 @@ public class FileInput : PathInput
         }
         
         Path = normalized;
-        TextBox.Text = normalized; // Update TextBox with cleaned version
+        _textBox.Text = normalized; // Update TextBox with cleaned version
         HasError = false;
         ValidationError = null;
     }
