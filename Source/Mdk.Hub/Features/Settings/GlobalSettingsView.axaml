@@ -165,6 +165,7 @@
                                             <controls:ValidatedControl.Content>
                                                 <controls:FileInput Path="{Binding CustomIdePath}"
                                                                     DefaultPath=""
+                                                                    AllowNonExisting="False"
                                                                     CanReset="True"
                                                                     Classes="executable"
                                                                     Classes.linux="{Binding IsLinux}"

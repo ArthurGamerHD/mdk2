@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 
@@ -49,55 +48,6 @@ public class FileInput : PathInput
         set => SetValue(PatternsProperty, value);
     }
     
-    TextBox? _textBox;
-
-    /// <inheritdoc />
-    protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
-    {
-        base.OnApplyTemplate(e);
-        _textBox = e.NameScope.Find<TextBox>("PART_TextBox");
-    } 
-
-    /// <inheritdoc />
-    protected override void CommitText()
-    {
-        if (_textBox == null)
-            return;
-
-        var text = _textBox.Text ?? string.Empty;
-        
-        // Always allow default value without normalization
-        if (text == DefaultPath)
-        {
-            Path = text;
-            HasError = false;
-            ValidationError = null;
-            return;
-        }
-
-        // Normalize and validate
-        var normalized = NormalizePath(text);
-        if (!IsValidPathFormat(normalized))
-        {
-            // Invalid path - don't commit but keep error state
-            HasError = true;
-            ValidationError = "Invalid path format";
-            return;
-        }
-
-        if (!File.Exists(normalized))
-        {
-            HasError = true;
-            ValidationError = "File does not exists";
-            return;
-        }
-        
-        Path = normalized;
-        _textBox.Text = normalized; // Update TextBox with cleaned version
-        HasError = false;
-        ValidationError = null;
-    }
-    
     /// <summary>
     ///     Open File Browser on Click
     /// </summary>
@@ -128,4 +78,17 @@ public class FileInput : PathInput
         if (result.Count > 0)
             Path = result[0].Path.LocalPath;
     }
+
+    /// <summary>
+    /// Validates that the selected file exists when existence checks are enabled.
+    /// </summary>
+    protected override bool PathExists(string normalizedPath)
+    {
+        return File.Exists(normalizedPath);
+    }
+
+    /// <summary>
+    /// Error shown when file existence is required but missing.
+    /// </summary>
+    protected override string MissingPathMessage => "File does not exist";
 }
