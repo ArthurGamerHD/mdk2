@@ -83,7 +83,10 @@ public class PathInput : TemplatedControl, ISupportValidation
 
     Button? _browseButton;
     Button? _resetButton;
-    TextBox? _textBox;
+    /// <summary>
+    ///     Text Box Element
+    /// </summary>
+    protected TextBox? TextBox;
 
     /// <summary>
     ///     Gets or sets the current path value.
@@ -181,11 +184,11 @@ public class PathInput : TemplatedControl, ISupportValidation
         base.OnApplyTemplate(e);
 
         // Unwire old events if they exist
-        if (_textBox != null)
+        if (TextBox != null)
         {
-            _textBox.TextChanged -= OnTextChanged;
-            _textBox.LostFocus -= OnTextBoxLostFocus;
-            _textBox.KeyDown -= OnTextBoxKeyDown;
+            TextBox.TextChanged -= OnTextChanged;
+            TextBox.LostFocus -= OnTextBoxLostFocus;
+            TextBox.KeyDown -= OnTextBoxKeyDown;
         }
         if (_browseButton != null)
             _browseButton.Click -= OnBrowseClick;
@@ -193,13 +196,13 @@ public class PathInput : TemplatedControl, ISupportValidation
             _resetButton.Click -= OnResetClick;
 
         // Find and wire up template parts
-        _textBox = e.NameScope.Find<TextBox>("PART_TextBox");
-        if (_textBox != null)
+        TextBox = e.NameScope.Find<TextBox>("PART_TextBox");
+        if (TextBox != null)
         {
-            _textBox.Text = Path;
-            _textBox.TextChanged += OnTextChanged;
-            _textBox.LostFocus += OnTextBoxLostFocus;
-            _textBox.KeyDown += OnTextBoxKeyDown;
+            TextBox.Text = Path;
+            TextBox.TextChanged += OnTextChanged;
+            TextBox.LostFocus += OnTextBoxLostFocus;
+            TextBox.KeyDown += OnTextBoxKeyDown;
         }
 
         _browseButton = e.NameScope.Find<Button>("PART_BrowseButton");
@@ -224,8 +227,8 @@ public class PathInput : TemplatedControl, ISupportValidation
         else if (change.Property == PathProperty)
         {
             // Update TextBox when Path changes externally (e.g., from ViewModel)
-            if (_textBox != null && _textBox.Text != Path)
-                _textBox.Text = Path;
+            if (TextBox != null && TextBox.Text != Path)
+                TextBox.Text = Path;
             UpdateResolvedProperties();
         }
         else if (change.Property == DefaultPathProperty || 
@@ -261,7 +264,12 @@ public class PathInput : TemplatedControl, ISupportValidation
         CanResetToDefault = CanReset && (Path != DefaultPath);
     }
 
-    async void OnBrowseClick(object? sender, RoutedEventArgs e)
+    /// <summary>
+    /// Open Directory Browser on Click
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    protected virtual async void OnBrowseClick(object? sender, RoutedEventArgs e)
     {
         var topLevel = TopLevel.GetTopLevel(this);
         if (topLevel == null)
@@ -293,11 +301,11 @@ public class PathInput : TemplatedControl, ISupportValidation
 
     void OnTextChanged(object? sender, TextChangedEventArgs e)
     {
-        if (_textBox == null)
+        if (TextBox == null)
             return;
 
         // Real-time validation against normalized path
-        var text = _textBox.Text ?? string.Empty;
+        var text = TextBox.Text ?? string.Empty;
         
         // Skip validation if it's the default value
         if (text == DefaultPath)
@@ -325,12 +333,15 @@ public class PathInput : TemplatedControl, ISupportValidation
             CommitText();
     }
 
-    void CommitText()
+    /// <summary>
+    ///     Validates and Commit Text
+    /// </summary>
+    protected virtual void CommitText()
     {
-        if (_textBox == null)
+        if (TextBox == null)
             return;
 
-        var text = _textBox.Text ?? string.Empty;
+        var text = TextBox.Text ?? string.Empty;
         
         // Always allow default value without normalization
         if (text == DefaultPath)
@@ -343,22 +354,26 @@ public class PathInput : TemplatedControl, ISupportValidation
 
         // Normalize and validate
         var normalized = NormalizePath(text);
-        if (IsValidPathFormat(normalized))
-        {
-            Path = normalized;
-            _textBox.Text = normalized; // Update TextBox with cleaned version
-            HasError = false;
-            ValidationError = null;
-        }
-        else
+        if (!IsValidPathFormat(normalized))
         {
             // Invalid path - don't commit but keep error state
             HasError = true;
             ValidationError = "Invalid path format";
+            return;
         }
+        
+        Path = normalized;
+        TextBox.Text = normalized; // Update TextBox with cleaned version
+        HasError = false;
+        ValidationError = null;
     }
 
-    string NormalizePath(string? path)
+    /// <summary>
+    ///     Normalize Path on current platform
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    protected string NormalizePath(string? path)
     {
         if (string.IsNullOrWhiteSpace(path))
             return string.Empty;
@@ -395,7 +410,12 @@ public class PathInput : TemplatedControl, ISupportValidation
         return normalized;
     }
 
-    bool IsValidPathFormat(string? path)
+    /// <summary>
+    ///     Checks if Path is valid on current platform
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    protected bool IsValidPathFormat(string? path)
     {
         // Empty is only valid if there's no default (or default is also empty)
         if (string.IsNullOrEmpty(path))

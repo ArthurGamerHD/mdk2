@@ -1,3 +1,7 @@
+v.2.2.1
+   - Added FileInput control for picking files across settings.
+   - Added a new input on Global Settings to chose which executable file will be called on clicking "Open in IDE"
+
 v.2.2.0
    - First public stable Hub release.
    - Version number aligned with MDK2 CLI/package line (jump from prerelease 1.x to 2.2.x) to reduce cross-tool version confusion.

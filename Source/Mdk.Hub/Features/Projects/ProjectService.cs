@@ -583,12 +583,32 @@ public class ProjectService : IProjectService
         {
             if (!File.Exists(projectPath.Value))
                 return false;
+            
+            string executablePath;
+            string arguments = string.Empty;
+            var hubSettings = _settings.GetValue(SettingsKeys.HubSettings, new HubSettings());
+            if (string.IsNullOrEmpty(hubSettings.CustomIdePath))
+            {
+                // let the OS decide what to do
+                executablePath = projectPath.Value;
+            }
+            else
+            {
+                // launch the IDE with this file
+                executablePath = hubSettings.CustomIdePath;
+                arguments = projectPath.Value;
+            }
+
+            if (executablePath != projectPath.Value && !File.Exists(executablePath))
+                return false;
 
             Process.Start(new ProcessStartInfo
             {
-                FileName = projectPath.Value,
+                FileName = executablePath,
+                Arguments = arguments,
                 UseShellExecute = true
             });
+
 
             _logger.Info($"Opened project in IDE: {projectPath}");
             return true;
