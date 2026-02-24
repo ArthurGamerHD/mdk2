@@ -596,7 +596,7 @@ public class ProjectService : IProjectService
             {
                 // launch the IDE with this file
                 executablePath = hubSettings.CustomIdePath;
-                arguments = projectPath.Value;
+                arguments = $"\"{projectPath.Value}\"";
             }
 
             if (executablePath != projectPath.Value && !File.Exists(executablePath))
