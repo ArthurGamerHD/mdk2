@@ -1,6 +1,6 @@
 v.2.2.1
    - Added FileInput control for picking files across settings.
-   - Added a new input on Global Settings to chose which executable file will be called on clicking "Open in IDE"
+   - Added a new input on Global Settings to choose which executable file will be called on clicking "Open in IDE"
    - Hub now consistently stays single-instance and activates the running window when launched again.
    - Launch attempts with first-run-only startup flags while Hub is already running now show a clear in-app message.
 
