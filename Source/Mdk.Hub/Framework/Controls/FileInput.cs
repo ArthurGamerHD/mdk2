@@ -40,7 +40,7 @@ public class FileInput : PathInput
 
     /// <summary>
     ///     Pattern-based filter applied to File Picker
-    ///     use ';' for multiples patterns. ex: "*.png/*.jpeg/malware*/cool-image.bmp"
+    ///     use ';' for multiples patterns. ex: "*.png;*.jpeg;malware*;cool-image.bmp"
     /// </summary>
     public string Patterns
     {
@@ -61,7 +61,7 @@ public class FileInput : PathInput
         
         var fileTypes = new FilePickerFileType(TypeName)
         {
-            Patterns = Patterns.Split("/", StringSplitOptions.RemoveEmptyEntries).AsReadOnly()
+            Patterns = Patterns.Split(";", StringSplitOptions.RemoveEmptyEntries).AsReadOnly()
         };
 
         var result = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions()

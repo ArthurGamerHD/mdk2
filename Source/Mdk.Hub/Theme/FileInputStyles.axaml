@@ -58,7 +58,7 @@
         </Style>
         <Style Selector="^:not(.linux)">
             <!-- List of possible extensions a user may want to execute... except .jar, I don't like .jar -->
-            <Setter Property="Patterns" Value="*.exe/*.com/*.bat/*.cmd/*.ps1/*.vbs/*.js/*.wsf"/>
+            <Setter Property="Patterns" Value="*.exe;*.com;*.bat;*.cmd;*.ps1;*.vbs;*.js;*.wsf"/>
         </Style>
     </Style>
 </Styles>
