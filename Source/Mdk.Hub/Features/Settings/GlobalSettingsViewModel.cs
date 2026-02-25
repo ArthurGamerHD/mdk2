@@ -168,7 +168,7 @@ public class GlobalSettingsViewModel : OverlayModel
     }
 
     /// <summary>
-    /// Gets or sets the custom Space Engineers binary path. Required on Linux.
+    /// Gets or sets the custom IDE executable path.
     /// </summary>
     public string CustomIdePath
     {
