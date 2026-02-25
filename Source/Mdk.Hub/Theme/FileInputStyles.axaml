@@ -57,7 +57,7 @@
             <Setter Property="Value" Value="fa-solid fa-file-code"/>
         </Style>
         <Style Selector="^:not(.linux)">
-            <!-- List of possibles extensions a user may want to execute... except .jar, I don't like .jar -->
+            <!-- List of possible extensions a user may want to execute... except .jar, I don't like .jar -->
             <Setter Property="Patterns" Value="*.exe/*.com/*.bat/*.cmd/*.ps1/*.vbs/*.js/*.wsf"/>
         </Style>
     </Style>
